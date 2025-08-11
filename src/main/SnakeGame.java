@@ -7,6 +7,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 import javax.swing.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.ArrayList;
 
 public class SnakeGame extends JPanel implements ActionListener, KeyListener{
     Timer gameLoop;
@@ -18,26 +21,6 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener{
     int boardHeight;
 
     private Snake snake;
-
-    private class Tile{
-        int x;
-        int y;
-
-        Tile(int x, int y){
-            this.x = x;
-            this.y = y;
-        }
-    }
-	
-    private class Snake{
-	private double velocityX = 0;
-	private double velocityY = 0;
-	Tile snakeHead = new Tile(10, 7);
-	// Array<Tile> snakeBody;
-	
-
-	}
-
 
     public SnakeGame(int boardHeight, int boardWidth) {
         this.boardHeight = boardHeight;
@@ -59,47 +42,43 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener{
 
     public void paintComponent(Graphics g){
         super.paintComponent(g);
-	g.setColor(Color.yellow);
+	    g.setColor(Color.yellow);
         g.drawImage(currBackground, 0, 0, getWidth(), getHeight()+75, null);    
         g.fillRect(snake.snakeHead.x*tileSize, snake.snakeHead.y*tileSize, tileSize, tileSize);
+
+        
     } 
 
     private void moveSnake(){
-	if(snake.snakeHead.x <= 20 && snake.snakeHead.x >= 0){
-     		snake.snakeHead.x += snake.velocityX;
-	}
-	
-	if(snake.snakeHead.y >= 0 && snake.snakeHead.y <= 14){ 
-       		snake.snakeHead.y += snake.velocityY;
-	}
+        if(!boundaryCollision()){
+            snake.snakeHead.x += snake.getVelX();
+            snake.snakeHead.y += snake.getVelY();
+
+        }
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-	moveSnake();
+	    moveSnake();
         repaint();
     }
     
     @Override
     public void keyPressed(KeyEvent e){
         if(e.getKeyChar() == 'l'){
-           snake.velocityX = 1;
-	   snake.velocityY = 0;
+            snake.setVelocity(1, 0);
         }
 
         if(e.getKeyChar() == 'h'){
-            snake.velocityX = -1;
-	    snake.velocityY = 0;
+            snake.setVelocity(-1, 0);
         }
 
         if(e.getKeyChar() == 'j'){
-	   snake.velocityX = 0;
-           snake.velocityY = 1;
+            snake.setVelocity(0, 1);
         }
 
         if(e.getKeyChar() == 'k'){
-            snake.velocityX = 0;
-	    snake.velocityY = -1;
+            snake.setVelocity(-1, 0);
         }
     }
 
@@ -111,4 +90,18 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener{
     @Override
     public void keyReleased(KeyEvent e){
         
-    }}
+    }
+
+
+    private boolean boundaryCollision(){
+        if(snake.snakeHead.x < 0 || snake.snakeHead.x > 20){
+            return true;
+        }
+
+        if(snake.snakeHead.y < 0 || snake.snakeHead.y > 14){
+            return true;
+        }
+
+        return false;
+    }
+}
